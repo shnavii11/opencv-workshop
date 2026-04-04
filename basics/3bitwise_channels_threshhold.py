@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 
 img = cv2.imread('input.png')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # BITWISE OPERATIONS
 
@@ -13,8 +14,7 @@ cv2.imshow('NOT', inverted_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-
-# A mask must be the same size as the image, but in grayscale (1 channel)
+# mask  is same size as image in grayscale
 mask = np.zeros(img.shape[:2], dtype="uint8")
 # draw a white circle on our black mask
 # white area (255) is what we want to keep of the original image

@@ -23,7 +23,7 @@ AMBER = (0, 140, 255)
 GOLD = (0, 210, 255)
 CORE_WHITE = (255, 255, 255)
 
-# A 'deque' is a double ended queue with a max length. When it hits 6 items, it deletes the oldest one automatically.
+# A 'deque' is a double ended queue (we set a max length). When it hits 6 items, it deletes the oldest one automatically.
 # we store the last 6 hand positions to draw faded out shield so it appears like motion blur
 hand_trails = {'Right': deque(maxlen=6), 'Left': deque(maxlen=6)}
 
@@ -39,7 +39,6 @@ def is_v_gesture(hand_landmarks):
     # z tells the depth ranging from -1 to 1 
     # here -ve will mean it is infront of wrist and +ve will mean it is behind wrist
 
-    
     def get_dist(idx):
         # normal distance formula
         tip = hand_landmarks.landmark[idx]
@@ -76,7 +75,7 @@ def draw_detailed_mandala(img, center, base_radius, hand_angle, hand_label, alph
     cv2.circle(overlay, center, int(base_radius * 0.92), (0, int(100*alpha), int(210*alpha)), 2)
 
     # now we will draw the rotating shapes which are not circles
-    # Math: Angle = (Time Rotation) + (Hand Tilt) + (45 degrees per point)
+    # Math: Angle = (Time Rotation) + (Hand Tilt) + (degrees per point)
     # Trig: X = cos(angle), Y = sin(angle). This finds points on a circle.
 
     # 2. DRAW OUTER OCTAGON (8 points, spins clockwise)
@@ -146,7 +145,7 @@ def update_sparks(frame, center, radius):
     particles = new_p
     cv2.addWeighted(frame, 1.0, s_layer, 1.0, 0, frame)
 
-# --- SECTION 3: THE MAIN LOOP (The App Running) ---
+# --- SECTION 3: THE MAIN LOOP  ---
 cap = cv2.VideoCapture(0) # Open your webcam.
 while cap.isOpened():
     success, frame = cap.read()
@@ -182,7 +181,7 @@ while cap.isOpened():
                 # Calculate Radius: Scales with hand distance and how wide you spread your fingers.
                 depth = math.sqrt((wrist.x - mcp.x)**2 + (wrist.y - mcp.y)**2)
                 stretch = math.sqrt((thumb.x - pinky.x)**2 + (thumb.y - pinky.y)**2)
-                radius = int((depth * 1.1 + stretch * 0.8) * w)
+                radius = int((depth * 0.8 + stretch * 0.6) * w)
                 # Calculate Angle: How much is your hand tilted?
                 angle = np.degrees(math.atan2(mcp.y - wrist.y, mcp.x - wrist.x))
                 
@@ -202,7 +201,7 @@ while cap.isOpened():
         if l not in active_labels: hand_trails[l].clear()
 
     # Show the final result in a window.
-    cv2.imshow('Pure Arcane Mandala v9.5', frame)
+    cv2.imshow('Shield', frame)
     # Press ESC to exit.
     if cv2.waitKey(1) & 0xFF == 27: break
 
