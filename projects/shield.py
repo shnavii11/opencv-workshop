@@ -198,7 +198,6 @@ while cap.isOpened():
                 elif (time.time() - gesture_timers[lbl]) > 0.5:
                     if (time.time() - last_toggle_time) > 1.2:  # this is to avoid wrong sensitive flickering
                         shields_active = not shields_active
-                        shields_active = not shields_active
                         last_toggle_time = time.time()
             else: 
                 gesture_timers[lbl] = 0
