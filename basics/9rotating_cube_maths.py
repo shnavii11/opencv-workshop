@@ -1,28 +1,32 @@
+# Concept: 3D Rotation & Orthographic Projection
+# A 3D cube has 8 vertices in (x, y, z) space. To draw it on a 2D screen,
+# we rotate the vertices using rotation matrices, then "flatten" them by ignoring Z.
+# This is called orthographic projection — no perspective, but it shows depth clearly.
+
 import cv2
 import numpy as np
 import math
 import time
 
-# Open webcam
 cap = cv2.VideoCapture(0)
 
-# Define the 8 vertices of a 3D unit cube
+# 8 corners of a unit cube centered at the origin, in 3D (x, y, z)
 vertices = np.array([
-    [-1, -1, -1],
-    [ 1, -1, -1],
-    [ 1,  1, -1],
-    [-1,  1, -1],
-    [-1, -1,  1],
-    [ 1, -1,  1],
-    [ 1,  1,  1],
-    [-1,  1,  1]
+    [-1, -1, -1],   # 0: back-bottom-left
+    [ 1, -1, -1],   # 1: back-bottom-right
+    [ 1,  1, -1],   # 2: back-top-right
+    [-1,  1, -1],   # 3: back-top-left
+    [-1, -1,  1],   # 4: front-bottom-left
+    [ 1, -1,  1],   # 5: front-bottom-right
+    [ 1,  1,  1],   # 6: front-top-right
+    [-1,  1,  1]    # 7: front-top-left
 ])
 
-# Define the 12 edges connecting the vertices
+# 12 edges: each is a pair of vertex indices to connect with a line
 edges = [
-    (0, 1), (1, 2), (2, 3), (3, 0),  # Back face
-    (4, 5), (5, 6), (6, 7), (7, 4),  # Front face
-    (0, 4), (1, 5), (2, 6), (3, 7)   # Connecting lines
+    (0, 1), (1, 2), (2, 3), (3, 0),   # Back face
+    (4, 5), (5, 6), (6, 7), (7, 4),   # Front face
+    (0, 4), (1, 5), (2, 6), (3, 7)    # Connecting edges (depth)
 ]
 
 while cap.isOpened():
@@ -33,54 +37,47 @@ while cap.isOpened():
     frame = cv2.flip(frame, 1)
     h, w, _ = frame.shape
 
-    # Center of screen and scale (size of the cube)
-    cx, cy = w // 2, h // 2
-    scale = 100
+    cx, cy = w // 2, h // 2   # Center of screen
+    scale = 100               # Multiplier to convert unit-cube coords to pixels
 
-    # Continuous time-based angle for Y-axis spin
-    angle_time = time.time() * 1.5 
-    
-    # Fixed 45-degree angle for X-axis tilt (np.pi / 4 radians)
-    angle_45 = math.pi / 4
+    angle_time = time.time() * 1.5    # Y-axis angle changes over time → continuous spin
+    angle_45 = math.pi / 4            # Fixed 45° tilt on X-axis so we see top and front
 
-    # Rotation Matrix for X-axis (Fixed 45 deg tilt so you can see the top/bottom)
+    # Rotation matrix around X-axis (tilts cube up/down)
+    # This is the standard 3D rotation matrix for X: https://en.wikipedia.org/wiki/Rotation_matrix
     rot_x = np.array([
-        [1, 0, 0],
+        [1,               0,                0],
         [0, math.cos(angle_45), -math.sin(angle_45)],
         [0, math.sin(angle_45),  math.cos(angle_45)]
     ])
 
-    # Rotation Matrix for Y-axis (Continuous spin)
+    # Rotation matrix around Y-axis (spins cube left/right)
     rot_y = np.array([
-        [math.cos(angle_time), 0, math.sin(angle_time)],
-        [0, 1, 0],
+        [ math.cos(angle_time), 0, math.sin(angle_time)],
+        [0,                     1, 0                   ],
         [-math.sin(angle_time), 0, math.cos(angle_time)]
     ])
 
-    # Store 2D projected points
     projected_points = []
-
     for v in vertices:
-        # Apply Y rotation (spin), then X rotation (tilt)
+        # Apply Y rotation first (spin), then X rotation (tilt)
         rotated_v = np.dot(rot_y, v)
         rotated_v = np.dot(rot_x, rotated_v)
-        
-        # Orthographic Projection: Ignore Z-axis, map X and Y to the 2D screen
+
+        # Orthographic projection: just drop Z and map (x, y) to screen coordinates
         x = int(cx + rotated_v[0] * scale)
         y = int(cy + rotated_v[1] * scale)
         projected_points.append((x, y))
 
-    # Draw the lines connecting the projected points
+    # Draw each edge by connecting its two projected 2D points
     for edge in edges:
         pt1 = projected_points[edge[0]]
         pt2 = projected_points[edge[1]]
         cv2.line(frame, pt1, pt2, (0, 255, 0), 3)
 
-    # Show the frame
     cv2.imshow("Rotating 3D Cube", frame)
 
-    # Press 'ESC' to exit
-    if cv2.waitKey(1) & 0xFF == 27:
+    if cv2.waitKey(1) & 0xFF == 27:   # Press ESC to exit
         break
 
 cap.release()
