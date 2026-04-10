@@ -13,7 +13,7 @@ This workshop covers the foundations: how to read, manipulate, filter, and draw 
 ```
 opencv-workshop/
 ├── assets/                        # Input images used by the scripts
-├── basics/                        # Core concepts, run in order (1 to 9)
+├── basics/                        # Core concepts, run in order (1 to 12)
 │   ├── constants.py               # Shared file paths (just import, don't edit)
 │   ├── 1io.py                     # Reading/writing images and webcam capture
 │   ├── 2shape_colours.py          # Image dimensions and color spaces
@@ -23,7 +23,10 @@ opencv-workshop/
 │   ├── 6contours.py               # Edge detection and contour analysis
 │   ├── 7morphology.py             # Erosion, dilation, and morphological ops
 │   ├── 8rotating_hexagon_maths.py # Animated hexagon using trigonometry
-│   └── 9rotating_cube_maths.py   # 3D cube with rotation matrices
+│   ├── 9rotating_cube_maths.py    # 3D cube with rotation matrices
+│   ├── 10mediapipe_hand_tracking.py # Hand detection and tracking with MediaPipe
+│   ├── 11filtering.py             # Image filtering: Gaussian, Median, Bilateral
+│   └── 12particle_systems.py      # Particle systems for explosion effects
 ├── projects/                      # Mini-projects built on the basics
 │   ├── fruit_ninja.py
 │   ├── invisible_cloak.py
@@ -45,6 +48,9 @@ opencv-workshop/
 | `7morphology.py` | Morphological Ops | Shrink or grow white regions to clean up binary images |
 | `8rotating_hexagon_maths.py` | Trig Animation | Use sin and cos to spin a hexagon on the webcam feed |
 | `9rotating_cube_maths.py` | 3D Projection | Rotate a 3D cube and project it flat onto your screen |
+| `10mediapipe_hand_tracking.py` | Hand Tracking | Detect and track hand landmarks using MediaPipe |
+| `11filtering.py` | Image Filtering | Apply Gaussian, Median, and Bilateral filters to images |
+| `12particle_systems.py` | Particle Systems | Create interactive explosion effects with physics simulation |
 
 ## Setup
 
@@ -94,6 +100,9 @@ python 1io.py
 | `7morphology.py` | `python 7morphology.py` | Multiple windows, press any key each time |
 | `8rotating_hexagon_maths.py` | `python 8rotating_hexagon_maths.py` | Live webcam, press ESC to exit |
 | `9rotating_cube_maths.py` | `python 9rotating_cube_maths.py` | Live webcam, press ESC to exit |
+| `10mediapipe_hand_tracking.py` | `python 10mediapipe_hand_tracking.py` | Live webcam hand tracking, press ESC to exit |
+| `11filtering.py` | `python 11filtering.py` | Shows filtered images, press any key to close |
+| `12particle_systems.py` | `python 12particle_systems.py` | Interactive explosions on click, press Q to exit |
 
 > If a window seems frozen, click on it and press any key. OpenCV needs focus to register keypresses.
 
