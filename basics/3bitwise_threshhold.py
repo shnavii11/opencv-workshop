@@ -21,14 +21,14 @@ cv2.destroyAllWindows()
 # A mask is a grayscale image where white (255) = "keep" and black (0) = "discard"
 mask = np.zeros(img.shape[:2], dtype="uint8")   # Start with a fully black (discard all) mask
 cv2.circle(mask, (250, 250), 200, 255, -1)       # Draw a white circle — only this area will show
-
+mask=cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)  # Convert mask to 3 channels to match img for bitwise ops
 mask_inv = cv2.bitwise_not(mask)                 # Invert the mask (now everything OUTSIDE shows)
 
 # bitwise_and keeps only the pixels where the mask is white (255)
-masked_img = cv2.bitwise_and(img, img, mask=mask)
+masked_img = cv2.bitwise_and(img,mask,mask=None) #masked_img = cv2.bitwise_and(img, mask)  # This also works since mask is already 3-channel
 
 # bitwise_or is less strict — non-zero pixels from either source come through
-masked_img_or = cv2.bitwise_or(img, img, mask=mask)
+masked_img_or = cv2.bitwise_or(img,mask,mask=None) #masked_img_or = cv2.bitwise_or(img, mask)  # This also works since mask is already 3-channel
 
 cv2.imshow("Original", img)
 cv2.imshow("The Mask", mask)
